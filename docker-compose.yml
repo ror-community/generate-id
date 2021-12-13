@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  generate-id:
+    container_name: generate-id
+    environment:
+      ROUTE_USER: 'user'
+      TOKEN: 'mytoken'
+      ROR_API_URL: 'http://localhost:9292/generateid'
+      ALLOWED_ORIGINS: 'http://localhost:8080'
+    build: .
+    image: rorcommunity/generate-id
+    ports:
+      - "5000:80"
+    volumes:
+      - ./:/src
