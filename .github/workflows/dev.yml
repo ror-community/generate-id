@@ -34,7 +34,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
 
   deploy:
-    needs: [test, build]
+    needs: build
     runs-on: ubuntu-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
