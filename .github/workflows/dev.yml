@@ -21,8 +21,8 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_GENERATEID_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_GENERATEID_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -73,7 +73,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add ror/services/generateid/_generateid-dev.auto.tfvars
-          git commit -m "Adding ror-api git variables for commit ${{ steps.extract_variables.outputs.GIT_SHA }}"
+          git commit -m "Adding generateid git variables for commit ${{ steps.extract_variables.outputs.GIT_SHA }}"
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
