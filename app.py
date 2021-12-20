@@ -16,17 +16,16 @@ origins = [
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins="*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/generateid")
-async def get_ror_id(response: Response, mode: Optional[str] = None):
+async def get_ror_id(mode: Optional[str] = None):
     # if being sent in any mode but production
     # mock an id
-    response.headers['Access-Control-Allow-Origin'] = os.environ['ALLOWED_ORIGINS']
     if mode:
         data = {'id':'https://ror.org/012DEV089'}
         response = data
