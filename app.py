@@ -14,7 +14,6 @@ URL = os.environ["ROR_API_URL"]
 origins = [
     os.environ['ALLOWED_ORIGINS']
 ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -29,8 +28,7 @@ async def get_ror_id(mode: Optional[str] = None):
     # mock an id
     if mode:
         data = {'id':'https://ror.org/012DEV089'}
-        json_compatible_item_data = jsonable_encoder(data)
-        response = JSONResponse(content=json_compatible_item_data)
+        response = data
     else:
         async with httpx.AsyncClient() as client:
             response = await client.get(URL, headers=HEADERS)
