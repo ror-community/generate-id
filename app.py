@@ -22,6 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/heartbeat")
+def response():
+    return {'status': 'OK'}
+
 @app.get("/generateid")
 async def get_ror_id(mode: Optional[str] = None):
     # if being sent in any mode but production
