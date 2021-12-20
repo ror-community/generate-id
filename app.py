@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from typing import Optional
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
@@ -23,9 +23,10 @@ app.add_middleware(
 )
 
 @app.get("/generateid")
-async def get_ror_id(mode: Optional[str] = None):
+async def get_ror_id(response: Response, mode: Optional[str] = None):
     # if being sent in any mode but production
     # mock an id
+    response.headers['Access-Control-Allow-Origin'] = os.environ['ALLOWED_ORIGINS']
     if mode:
         data = {'id':'https://ror.org/012DEV089'}
         response = data
