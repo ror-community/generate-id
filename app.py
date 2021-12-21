@@ -26,6 +26,15 @@ app.add_middleware(
 def response():
     return {'status': 'OK'}
 
+@app.get("/address/{location_id}")
+async def get_address(location_id):
+    params = { "username": "roradmin", "geonameId": location_id }
+    geonames_url = "http://api.geonames.org/getJSON"
+    async with httpx.AsyncClient() as client:
+        response = await client.get(geonames_url, params = params)
+        response = response.json()
+    return response
+
 @app.get("/generateid")
 async def get_ror_id(mode: Optional[str] = None):
     # if being sent in any mode but production
