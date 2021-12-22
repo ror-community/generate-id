@@ -24,7 +24,7 @@ app.add_middleware(
 
 @app.get("/heartbeat")
 def response():
-    return {'status': 'OK'}
+    return {'status': 'HOK'}
 
 @app.get("/address/{location_id}")
 async def get_address(location_id):
@@ -32,7 +32,7 @@ async def get_address(location_id):
     geonames_url = "http://api.geonames.org/getJSON"
     async with httpx.AsyncClient() as client:
         response = await client.get(geonames_url, params = params)
-    return response
+    return response.json()
 
 @app.get("/generateid")
 async def get_ror_id(mode: Optional[str] = None):
