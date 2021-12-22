@@ -9,8 +9,9 @@ services:
       ROR_API_URL: 'http://localhost:9292/generateid'
       ALLOWED_ORIGINS: 'http://localhost:8080'
     build: .
-    image: rorcommunity/generate-id
+    image: rorcommunity/generateid
     ports:
       - "5000:80"
+      - "2222:22"
     volumes:
       - ./:/src

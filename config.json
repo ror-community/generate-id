@@ -1,0 +1,17 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "applications/generateid"
+        }
+    },
+
+    "applications": {
+        "generateid": {
+            "type": "python 3.9",
+            "path": "/generateid",
+            "home": "/usr/local",
+            "module": "app",
+            "callable": "app"
+        }
+    }
+}
