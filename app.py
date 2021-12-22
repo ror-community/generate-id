@@ -32,7 +32,6 @@ async def get_address(location_id):
     geonames_url = "http://api.geonames.org/getJSON"
     async with httpx.AsyncClient() as client:
         response = await client.get(geonames_url, params = params)
-        response = response.json()
     return response
 
 @app.get("/generateid")
