@@ -26,9 +26,9 @@ app.add_middleware(
 def response():
     return {'status': 'HOK'}
 
-@app.get("/address/{location_id}")
-async def get_address(location_id):
-    params = { "username": "roradmin", "geonameId": location_id }
+@app.get("/address")
+async def get_address(locationid: int):
+    params = { "username": "roradmin", "geonameId": locationid }
     geonames_url = "http://api.geonames.org/getJSON"
     async with httpx.AsyncClient() as client:
         response = await client.get(geonames_url, params = params)
