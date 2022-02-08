@@ -8,7 +8,7 @@ import sys
 
 app = FastAPI()
 
-logger.basicConfig(encoding='utf-8', level=logger.DEBUG, stream = sys.stdout)
+logger.basicConfig(encoding='utf-8',level=logger.DEBUG, stream = sys.stdout)
 
 HEADERS = {'Token': os.environ["TOKEN"], 'Route-User': os.environ["ROUTE_USER"]}
 URL = os.environ["ROR_API_URL"]
@@ -68,10 +68,23 @@ async def get_ror_id(request: Request, response: Response, mode: Optional[str] =
         data = {'id':'https://ror.org/012dev089'}
         response = data
     else:
-        response = await handle_http_request(request, response, url=URL, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
+        url = URL + "/generateid"
+        response = await handle_http_request(request, response, url=url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
         try:
             if response and response.json():
                 response = response.json()
         except Exception as e:
             return e
+    return response 
+
+@app.get("/indexdata")
+async def get_ror_id(request: Request, response: Response, mode: Optional[str] = None):
+    logger.info(info(request))
+    url = URL + "/indexdata"
+    response = await handle_http_request(request, response, url=url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
+    try:
+        if response and response.json():
+            response = response.json()
+    except Exception as e:
+        return e
     return response 
