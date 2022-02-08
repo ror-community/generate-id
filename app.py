@@ -41,7 +41,7 @@ async def handle_http_request(request: Request, response: Response, url, error_s
             except httpx.HTTPStatusError as exc:
                 response.status_code = exc.response.status_code
                 logger.error(f"Error response {exc.response.status_code} while requesting {exc.request.url!r}.")
-    return response 
+    return response
 
 @app.get("/heartbeat")
 def response(request:Request):
@@ -57,7 +57,7 @@ async def get_address(locationid: int, request: Request, response: Response):
         if response and response.json():
             return response.json()
     except Exception as e:
-        return e 
+        return e
 
 @app.get("/generateid")
 async def get_ror_id(request: Request, response: Response, mode: Optional[str] = None):
@@ -68,10 +68,24 @@ async def get_ror_id(request: Request, response: Response, mode: Optional[str] =
         data = {'id':'https://ror.org/012dev089'}
         response = data
     else:
-        response = await handle_http_request(request, response, url=URL, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
+        request_url = URL + request.url.path
+        response = await handle_http_request(request, response, url=request_url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
         try:
             if response and response.json():
                 response = response.json()
         except Exception as e:
             return e
-    return response 
+    return response
+
+@app.get("/indexdata")
+async def index_new_records(request: Request, response: Response):
+    logger.info(info(request))
+    request_url = URL + request.url.path
+    response = await handle_http_request(request, response, url=request_url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
+    try:
+        if response and response.json():
+            response = response.json()
+    except Exception as e:
+        return e
+    return response
+    # return {'msg': 'You hit the indexdata endpoint'}

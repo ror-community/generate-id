@@ -6,7 +6,7 @@ services:
     environment:
       ROUTE_USER: 'user'
       TOKEN: 'mytoken'
-      ROR_API_URL: 'http://localhost:9292/generateid'
+      ROR_API_URL: 'http://localhost:9292'
       ALLOWED_ORIGINS: 'http://localhost:8080'
     build: .
     image: rorcommunity/generateid
