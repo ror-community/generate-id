@@ -8,7 +8,7 @@ import sys
 
 app = FastAPI()
 
-logger.basicConfig(encoding='utf-8', level=logger.DEBUG, stream = sys.stdout)
+logger.basicConfig(encoding='utf-8',level=logger.DEBUG,stream = sys.stdout)
 
 HEADERS = {'Token': os.environ["TOKEN"], 'Route-User': os.environ["ROUTE_USER"]}
 URL = os.environ["ROR_API_URL"]
@@ -88,4 +88,3 @@ async def index_new_records(request: Request, response: Response):
     except Exception as e:
         return e
     return response
-    # return {'msg': 'You hit the indexdata endpoint'}
