@@ -1,8 +1,18 @@
 from fastapi.testclient import TestClient
-
 from app import app
+import os
+import pytest
+import re
+
+ROR_ID_REGEX = r'((https(:\/\/|%3A%2F%2F))ror\.org(\/|%2F))?0\w{6}\d{2}'
+DEFAULT_ENV_VARS = {'TOKEN': 'mytoken', 'ROUTE_USER': 'user', 'ROR_API_URL': 'http://ror-api', 'ALLOWED_ORIGINS': 'http://localhost:8080'}
 
 client = TestClient(app)
+
+@pytest.fixture
+def mock_default_env (monkeypatch):
+    for k, v in DEFAULT_ENV_VARS.items():
+        monkeypatch.setenv(k, v)
 
 def test_get_heartbeat():
     response = client.get("/heartbeat")
@@ -17,57 +27,58 @@ def test_get_address():
     assert response.status_code == 200
     assert response_json['geonameId'] == int(locationid)
 
-def test_generateid_dev(monkeypatch):
-    monkeypatch.setenv('TOKEN', 'mytoken')
-    monkeypatch.setenv('ROUTE_USER', 'user')
-    monkeypatch.setenv('ROR_API_URL', 'http://ror-api')
-    monkeypatch.setenv('ALLOWED_ORIGINS', 'http://localhost:8080')
+def test_generateid_dev(mock_default_env):
+    assert os.environ.get('TOKEN') == 'mytoken'
+    assert os.environ.get('ROUTE_USER') == 'user'
     params={'mode': 'dev'}
     response = client.get("/generateid", params=params)
     assert response.status_code == 200
     assert response.json() == {'id':'https://ror.org/012dev089'}
 
-def test_generateid_bad_token(monkeypatch):
+def test_generateid(mock_default_env):
+    assert os.environ.get('TOKEN') == 'mytoken'
+    assert os.environ.get('ROUTE_USER') == 'user'
+    response = client.get("/generateid")
+    response_json = response.json()
+    print(response_json['id'])
+    assert response.status_code == 200
+    assert re.match(ROR_ID_REGEX, response_json['id'])
+
+def test_generateid_bad_token(mock_default_env, monkeypatch):
     monkeypatch.setenv('TOKEN', 'badtoken')
-    monkeypatch.setenv('ROUTE_USER', 'user')
-    monkeypatch.setenv('ROR_API_URL', 'http://ror-api')
-    monkeypatch.setenv('ALLOWED_ORIGINS', 'http://localhost:8080')
+    assert os.environ.get('TOKEN') == 'badtoken'
+    assert os.environ.get('ROUTE_USER') == 'user'
     response = client.get("/generateid")
     assert response.status_code == 200
     assert response.json() == {'detail': 'Authentication credentials were not provided.'}
 
-def test_generateid_bad_user(monkeypatch):
-    monkeypatch.setenv('TOKEN', 'mytoken')
+def test_generateid_bad_user(mock_default_env, monkeypatch):
     monkeypatch.setenv('ROUTE_USER', 'baduser')
-    monkeypatch.setenv('ROR_API_URL', 'http://ror-api')
-    monkeypatch.setenv('ALLOWED_ORIGINS', 'http://localhost:8080')
+    assert os.environ.get('TOKEN') == 'mytoken'
+    assert os.environ.get('ROUTE_USER') == 'baduser'
     response = client.get("/generateid")
     assert response.status_code == 200
     assert response.json() == {'detail': 'Authentication credentials were not provided.'}
 
-def test_indexdata(monkeypatch):
-    monkeypatch.setenv('TOKEN', 'mytoken')
-    monkeypatch.setenv('ROUTE_USER', 'user')
-    monkeypatch.setenv('ROR_API_URL', 'http://ror-api')
-    monkeypatch.setenv('ALLOWED_ORIGINS', 'http://localhost:8080')
+def test_indexdata(mock_default_env):
+    assert os.environ.get('TOKEN') == 'mytoken'
+    assert os.environ.get('ROUTE_USER') == 'user'
     response = client.get("/indexdata")
     assert response.status_code == 200
     assert response.json() == {"status":"indexing data OK"}
 
-def test_indexdata_bad_token(monkeypatch):
+def test_indexdata_bad_token(mock_default_env, monkeypatch):
     monkeypatch.setenv('TOKEN', 'badtoken')
-    monkeypatch.setenv('ROUTE_USER', 'user')
-    monkeypatch.setenv('ROR_API_URL', 'http://ror-api')
-    monkeypatch.setenv('ALLOWED_ORIGINS', 'http://localhost:8080')
+    assert os.environ.get('TOKEN') == 'badtoken'
+    assert os.environ.get('ROUTE_USER') == 'user'
     response = client.get("/indexdata")
     assert response.status_code == 200
     assert response.json() == {'detail': 'Authentication credentials were not provided.'}
 
-def test_generate_id_bad_user(monkeypatch):
-    monkeypatch.setenv('TOKEN', 'mytoken')
+def test_generate_id_bad_user(mock_default_env, monkeypatch):
     monkeypatch.setenv('ROUTE_USER', 'baduser')
-    monkeypatch.setenv('ROR_API_URL', 'http://ror-api')
-    monkeypatch.setenv('ALLOWED_ORIGINS', 'http://localhost:8080')
+    assert os.environ.get('TOKEN') == 'mytoken'
+    assert os.environ.get('ROUTE_USER') == 'baduser'
     response = client.get("/indexdata")
     assert response.status_code == 200
     assert response.json() == {'detail': 'Authentication credentials were not provided.'}

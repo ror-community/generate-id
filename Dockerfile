@@ -4,3 +4,4 @@ COPY requirements.txt /generateid/requirements.txt
 RUN pip install -r /generateid/requirements.txt
 COPY config.json /docker-entrypoint.d/config.json
 COPY . /generateid
+WORKDIR /generateid

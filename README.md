@@ -1,21 +1,15 @@
 # generate-id
 A microservice helper that calls the ROR API to do various administrative tasks
 
-# Dev setup
+## Dev setup
 
-```docker-compose up```
+Start generate-id, ror-api and elasticsearch containers
+```docker-compose up -d```
 
-# Run tests
+Optionally, index ROR data into elasticsearch
+```docker-compose exec web python manage.py setup```
 
-1. Access the CLI for the generateid container
 
-        docker ps
-        docker exec -it [CONTAINER_ID] bash
+## Run tests
 
-2. Move to the generateid dir
-
-        cd generateid
-
-3. Run tests
-
-        python -m pytest
+```docker exec generate-id python -m pytest```
