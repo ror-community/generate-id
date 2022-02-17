@@ -77,7 +77,7 @@ async def get_ror_id(request: Request, response: Response, mode: Optional[str] =
             return e
     return response
 
-@app.get("/indexdata")
+@app.get("/indexdata/{branch}")
 async def index_new_records(request: Request, response: Response):
     logger.info(info(request))
     request_url = URL + request.url.path

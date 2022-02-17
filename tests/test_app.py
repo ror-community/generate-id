@@ -71,7 +71,7 @@ def test_indexdata_bad_token(mock_default_env, monkeypatch):
     monkeypatch.setenv('TOKEN', 'badtoken')
     assert os.environ.get('TOKEN') == 'badtoken'
     assert os.environ.get('ROUTE_USER') == 'user'
-    response = client.get("/indexdata")
+    response = client.get("/indexdata/1")
     assert response.status_code == 200
     assert response.json() == {'detail': 'Authentication credentials were not provided.'}
 
@@ -79,7 +79,7 @@ def test_generate_id_bad_user(mock_default_env, monkeypatch):
     monkeypatch.setenv('ROUTE_USER', 'baduser')
     assert os.environ.get('TOKEN') == 'mytoken'
     assert os.environ.get('ROUTE_USER') == 'baduser'
-    response = client.get("/indexdata")
+    response = client.get("/indexdata/1")
     assert response.status_code == 200
     assert response.json() == {'detail': 'Authentication credentials were not provided.'}
 
