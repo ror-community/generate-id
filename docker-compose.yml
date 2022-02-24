@@ -1,17 +1,52 @@
 version: '3'
 
 services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xmx256m -Xms256m
+      ELASTIC_PASSWORD: changeme
+      xpack.security.enabled: "false"
+      http.cors.enabled: "true"
+      http.cors.allow-origin: "*"
+    healthcheck:
+      test: curl -f http://elastic:changeme@elasticsearch:9200
+      interval: 10s
+      timeout: 1s
+
+  ror-api:
+    container_name: ror-api
+    environment:
+      ELASTIC_HOST: elasticsearch
+      ELASTIC_PORT: 9200
+      ELASTIC_PASSWORD: changeme
+      ROR_BASE_URL: http://localhost
+      ROUTE_USER: 'user'
+      TOKEN: 'mytoken'
+    #build: .
+    image: rorcommunity/ror-api:dev
+    ports:
+      - "9292:80"
+      - "2222:22"
+    volumes:
+      - ./:/src
   generate-id:
     container_name: generate-id
     environment:
       ROUTE_USER: 'user'
       TOKEN: 'mytoken'
-      ROR_API_URL: 'http://localhost:9292/generateid'
+      ROR_API_URL: 'http://ror-api'
       ALLOWED_ORIGINS: 'http://localhost:8080'
     build: .
-    image: rorcommunity/generateid
+    #image: rorcommunity/generateid
     ports:
       - "5000:80"
-      - "2222:22"
     volumes:
       - ./:/src
+    depends_on:
+      - elasticsearch
+      - ror-api
