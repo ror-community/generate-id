@@ -12,10 +12,7 @@ logger.basicConfig(encoding='utf-8',level=logger.DEBUG,stream = sys.stdout)
 
 HEADERS = {'Token': os.environ["TOKEN"], 'Route-User': os.environ["ROUTE_USER"]}
 URL = os.environ["ROR_API_URL"]
-
-origins = [
-    os.environ['ALLOWED_ORIGINS']
-]
+origins = list(os.environ['ALLOWED_ORIGINS'])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
