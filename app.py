@@ -13,6 +13,7 @@ logger.basicConfig(encoding='utf-8',level=logger.DEBUG,stream = sys.stdout)
 HEADERS = {'Token': os.environ["TOKEN"], 'Route-User': os.environ["ROUTE_USER"]}
 URL = os.environ["ROR_API_URL"]
 origins = os.environ['ALLOWED_ORIGINS'].split(",")
+MS_TOKEN = os.environ.get('MICROSERVICE_USE_TOKEN', None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -77,11 +78,15 @@ async def get_ror_id(request: Request, response: Response, mode: Optional[str] =
 @app.get("/indexdata/{branch}")
 async def index_new_records(request: Request, response: Response):
     logger.info(info(request))
-    request_url = URL + request.url.path
-    response = await handle_http_request(request, response, url=request_url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
-    try:
-        if response and response.json():
-            response = response.json()
-    except Exception as e:
-        return e
+    token = request.headers.get('X-Token', None)
+    if (token and (token == MS_TOKEN)):
+        request_url = URL + request.url.path
+        response = await handle_http_request(request, response, url=request_url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
+        try:
+            if response and response.json():
+                response = response.json()
+        except Exception as e:
+            return e
+    else:
+        response.status_code = status.HTTP_403_FORBIDDEN 
     return response
