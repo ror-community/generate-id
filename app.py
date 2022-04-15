@@ -47,10 +47,9 @@ def response(request:Request):
     return {'status': 'OK'}
 
 @app.get("/address")
-async def get_address(locationid: int, request: Request, response: Response):
-    params = { "username": "roradmin", "geonameId": locationid }
-    geonames_url = "http://api.geonames.org/getJSON"
-    response = await handle_http_request(request, response, url=geonames_url, error_status="400", **params)
+async def get_address(locationid: str, request: Request, response: Response):
+    request_url = URL + '/generateaddress/' + locationid
+    response = await handle_http_request(request, response, url=request_url, error_status=status.HTTP_503_SERVICE_UNAVAILABLE, **HEADERS)
     try:
         if response and response.json():
             return response.json()
