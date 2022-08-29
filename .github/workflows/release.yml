@@ -1,11 +1,7 @@
-name: Deploy Dev
+name: Release
 on:
-  push:
-    branches:
-      - "dev"
-    paths-ignore:
-      - '**/README.md'
-      - '**/workflows/**'
+  release:
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,7 +28,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: rorcommunity/generateid:dev
+          tags: rorcommunity/generateid:${{ steps.set_git_vars.outputs.GIT_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
@@ -71,11 +67,11 @@ jobs:
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
-          ./dockerize -template ror/services/generateid/_generateid-dev.auto.tfvars.tmpl:ror/services/generateid/_generateid-dev.auto.tfvars
+          ./dockerize -template ror/services/generateid/_generateid.auto.tfvars.tmpl:ror/services/generateid/_generateid.auto.tfvars
 
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ror/services/generateid/_generateid-dev.auto.tfvars
+          git add ror/services/generateid/_generateid.auto.tfvars
           git commit -m "Adding generateid git variables for commit ${{ steps.extract_variables.outputs.GIT_SHA }}"
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
@@ -89,7 +85,7 @@ jobs:
         with:
           channel: "#deployment-updates"
           color: "good"
-          text: "A new version of the <https://generateid.dev.ror.org|Generate ID Microservice> is deployed to dev."
+          text: "A new version of the <https://generateid.ror.org|Generate ID Microservice> is deployed to production."
           failure_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed"
           fields: |
             [{ "title": "Commit message", "value": "${{ steps.extract_variables.outputs.MESSAGE }}" },
